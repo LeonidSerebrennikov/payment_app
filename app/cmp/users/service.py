@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 from typing import List, Optional
 from app.cmp.users import repository as user_repo
-from app.cmp.users.schemas import UserCreate, UserUpdate, UserResponse
+from app.cmp.users.schemas import UserCreate, UserUpdate, UserResponse, UserWithAccounts
 from app.core.auth import get_password_hash, verify_password, create_access_token
 
 async def authenticate_user(db: AsyncSession, email: str, password: str):
@@ -75,4 +75,8 @@ async def delete_user(db: AsyncSession, user_id: int):
 
 async def get_all_users(db: AsyncSession) -> List[UserResponse]:
     users = await user_repo.get_all_users(db)
+    return users
+
+async def get_all_users_with_accounts(db: AsyncSession) -> List[UserWithAccounts]:
+    users = await user_repo.get_all_users_with_accounts(db)
     return users

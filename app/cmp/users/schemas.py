@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
+from app.cmp.accounts.schemas import AccountSimpleResponse
 
 class UserBase(BaseModel):
     email: EmailStr
@@ -21,6 +22,9 @@ class UserResponse(UserBase):
     
     class Config:
         from_attributes = True
+
+class UserWithAccounts(UserResponse):
+    accounts: List[AccountSimpleResponse] = []
 
 class LoginRequest(BaseModel):
     email: EmailStr

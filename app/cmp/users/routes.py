@@ -4,11 +4,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.db import get_db
 from app.cmp.users.schemas import (
     LoginRequest, TokenResponse, UserResponse, 
-    UserCreate, UserUpdate
+    UserCreate, UserUpdate, UserWithAccounts
 )
 from app.cmp.users.service import (
     login_user, create_user, get_user_by_id, 
-    update_user, delete_user, get_all_users
+    update_user, delete_user, get_all_users_with_accounts
 )
 from app.cmp.users.dependecies import get_current_user_from_db, get_current_admin_user
 from app.cmp.users.models import User
@@ -31,12 +31,12 @@ async def get_current_user_info(
 
 admin_router = APIRouter(prefix="/admin/users", tags=["Admin Users"])
 
-@admin_router.get("/", response_model=List[UserResponse])
+@admin_router.get("/", response_model=List[UserWithAccounts])
 async def get_all_users_route(
     db: AsyncSession = Depends(get_db),
     current_admin: User = Depends(get_current_admin_user)
 ):
-    return await get_all_users(db)
+    return await get_all_users_with_accounts(db)
 
 @admin_router.get("/{user_id}", response_model=UserResponse)
 async def get_user_route(

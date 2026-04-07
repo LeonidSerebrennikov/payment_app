@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 from sqlalchemy import select, update, delete
 from typing import Optional, List
 from app.cmp.users.models import User
@@ -15,6 +16,15 @@ async def get_user_by_email(db: AsyncSession, email: str) -> Optional[User]:
 async def get_all_users(db: AsyncSession, skip: int = 0, limit: int = 100) -> List[User]:
     result = await db.execute(
         select(User).offset(skip).limit(limit)
+    )
+    return result.scalars().all()
+
+async def get_all_users_with_accounts(db: AsyncSession, skip: int = 0, limit: int = 100) -> List[User]:
+    result = await db.execute(
+        select(User)
+        .options(selectinload(User.accounts))
+        .offset(skip)
+        .limit(limit)
     )
     return result.scalars().all()
 
